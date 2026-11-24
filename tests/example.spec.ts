@@ -1,4 +1,7 @@
 import { expect, test } from '../fixtures/fixtures';
+import { articleRequestObject } from '../request-objects/articles/POST_articles';
+import { generateSchema } from '../utils/schema-generator';
+import { validateSchema } from '../utils/schema-validator';
 
 
 
@@ -7,16 +10,22 @@ test('Create article, update it and delete it', async ({ api }) => {
   //create an Article
   const createArticleResponse = await api
     .path('articles/')
-    .body({ "article": { "title": "Sotiris api test", "description": "dsds", "body": "sds", "tagList": [] } })
+    .body(articleRequestObject)
     .postRequest(201)
+
+  //generateSchema('articles','POST_articles',createArticleResponse)
+  await validateSchema('articles','POST_articles',createArticleResponse)
 
   //get all Articles and assert that the 1st one is the one we created
   const getArticlesResponse = await api
     .path('articles/')
     .params({ limit: 10, offset: 0 })
-    .getRequest(202)
+    .getRequest(200)
 
   expect(getArticlesResponse.articles[0].title).toEqual("Sotiris api test")
+
+  //generateSchema('articles','GET_articles',getArticlesResponse)
+  await validateSchema('articles','GET_articles',getArticlesResponse)
 
   const createdArticleSlugId = getArticlesResponse.articles[0].slug
 
@@ -53,17 +62,17 @@ test('Create article, update it and delete it', async ({ api }) => {
 
 test('test', async ({ api }) => {
 
-  
-
   //get all Articles and assert that the 1st one is the one we created
   const getArticlesResponse = await api
     .path('articles/')
     .params({ limit: 10, offset: 0 })
     .getRequest(202)
 
-
+    
 
 });
+
+
 
 
 

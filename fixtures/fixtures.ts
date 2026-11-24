@@ -1,6 +1,7 @@
-import { APIRequestContext, test as base } from '@playwright/test';
+import { test as base } from '@playwright/test';
 import { RequestHandler } from '../utils/request-handler';
 import { APILogger } from '../utils/logger';
+import { TokenAuth } from '../utils/tokenAuth';
 
 
 // Declare the types of your fixtures.
@@ -13,9 +14,8 @@ type MyFixtures = {
 export const test = base.extend<MyFixtures>({
     api: async ({ request }, use) => {
 
-        const loginResponse = await request.post('https://conduit-api.bondaracademy.com/api/users/login', { data: { "user": { "email": "sotirisapitestingtutorial@gmail.com", "password": "password1234" } } })
-        const loginResponseJSON = await loginResponse.json()
-        const authToken = `Token ${loginResponseJSON.user.token}`
+        const tokenAuth = new TokenAuth(request)
+        const authToken = await tokenAuth.getToken()
         
         const apiLogger = new APILogger()
 

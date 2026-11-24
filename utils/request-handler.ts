@@ -1,6 +1,5 @@
-import { APIRequestContext, expect, request } from "@playwright/test"
+import { APIRequestContext } from "@playwright/test"
 import { APILogger } from "./logger"
-import { ExpectMatcherUtils } from "@playwright/test"
 
 export class RequestHandler {
     private baseUrl?: String
@@ -53,8 +52,6 @@ export class RequestHandler {
         this.apiLogger.logResponse(actualStatusCode,responseJSON)
         this.statusCodeValidator(expectedStatusCode,actualStatusCode)
         
-        
-
         this.cleanUp()
         return responseJSON
     }
@@ -67,8 +64,6 @@ export class RequestHandler {
         const responseJSON = await response.json()
         this.apiLogger.logResponse(actualStatusCode,responseJSON)
         this.statusCodeValidator(expectedStatusCode,actualStatusCode)
-        
-        
 
         this.cleanUp()
         return responseJSON
@@ -82,8 +77,6 @@ export class RequestHandler {
         const responseJSON = await response.json()
         this.apiLogger.logResponse(actualStatusCode,responseJSON)
         this.statusCodeValidator(expectedStatusCode,actualStatusCode)
-        
-        
 
         this.cleanUp()
         return responseJSON
@@ -96,8 +89,7 @@ export class RequestHandler {
         const actualStatusCode = response.status()
         this.apiLogger.logResponse(actualStatusCode)
         this.statusCodeValidator(expectedStatusCode,actualStatusCode)
-        
-        
+      
         this.cleanUp()
     
     }
@@ -115,7 +107,9 @@ export class RequestHandler {
     statusCodeValidator(expectedStatusCode: number, actualStatusCode: number,){
         if(expectedStatusCode!=actualStatusCode){
             console.log(this.apiLogger.getRecentLogs())
-            throw Error (`Expected: \x1b[32m{${expectedStatusCode}} \x1b[37m status code but received: \x1b[31m{${actualStatusCode}} \x1b[37mstatus code`)
+            const error = new Error (`Expected: \x1b[32m{${expectedStatusCode}} \x1b[37m status code but received: \x1b[31m{${actualStatusCode}} \x1b[37mstatus code`);
+            (Error as any).captureStackTrace(error, this.statusCodeValidator);
+            throw error
         }
     }
 
